@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Prorated Refund Calculator</title>
+</head>
+<body>
+  <h1>Prorated Refund Calculator</h1>
+  <form>
+    <label for="last-charged">Last Charged Date:</label>
+    <input type="date" id="last-charged" name="last-charged">
+    <br>
+    <label for="subscription-price">Subscription Price:</label>
+    <input type="number" id="subscription-price" name="subscription-price" min="0">
+    <br>
+    <button id="calculate-refund">Calculate Refund Amount</button>
+    <br>
+    <label for="refund-amount">Refund Amount:</label>
+    <output id="refund-amount" name="refund-amount"></output>
+  </form>
+
+  <script>
+    // Get the elements we need
+    const lastChargedInput = document.getElementById("last-charged");
+    const subscriptionPriceInput = document.getElementById("subscription-price");
+    const refundAmountOutput = document.getElementById("refund-amount");
+    const calculateButton = document.getElementById("calculate-refund");
+
+    // Attach an event listener to the calculate button
+    calculateButton.addEventListener("click", function(event) {
+      event.preventDefault(); // Prevent the form from submitting
+
+      // Get the last charged date and subscription price
+      const lastCharged = new Date(lastChargedInput.value);
+      const subscriptionPrice = parseFloat(subscriptionPriceInput.value);
+
+      // Check if the subscription price is valid
+      if (isNaN(subscriptionPrice)) {
+        refundAmountOutput.value = "";
+        return;
+      }
+
+      // Calculate the number of days remaining in the subscription
+      const currentDate = new Date();
+      const timeDiff = Math.abs(currentDate.getTime() - lastCharged.getTime());
+      const remainingDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+      // Check if the remaining days is valid
+      if (isNaN(remainingDays)) {
+        refundAmountOutput.value = "";
+        return;
+      }
+
+      // Calculate the refund amount
+      const refundAmount = remainingDays * (subscriptionPrice / 30);
+
+      // Display the refund amount
+      refundAmountOutput.value = "$" + refundAmount.toFixed(2);
+    });
+
+    // Attach an event listener to the subscription price input
+    subscriptionPriceInput.addEventListener("input", function() {
+      // If the subscription price is cleared, clear the refund amount as well
+      if (subscriptionPriceInput.value === "") {
+        refundAmountOutput.value = "";
+      }
+    });
+  </script>
+</body>
+</html>
